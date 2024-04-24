@@ -91,7 +91,7 @@ export class Ave extends Animal {
      * @param idHabitat Opcional - Id do habitat que será associado à ave
      * @returns **true** caso sucesso, **false** caso erro
      */
-    static async cadastrarAve(ave: Ave, idHabitat: number): Promise<any> {
+    static async cadastrarAve(ave: Ave, idHabitat: number): Promise<Boolean> {
         // Cria uma variável do tipo booleano para guardar o status do resultado da query
         let insertResult = false;
 
@@ -124,6 +124,37 @@ export class Ave extends Animal {
 
             // Caso a inserção no banco der algum erro, é restorno o valor FALSO para quem chamou a função
             return insertResult;
+        }
+    }
+
+    /**
+     * Remove um animal do banco de dados
+     * @param idAnimal 
+     * @returns 
+     */
+    static async removerAve(idAnimal: number): Promise<Boolean> {
+        let queryResult = false;
+
+        try {
+            const queryDeleteAnimalHabitat = `DELETE FROM animal_habitat WHERE idanimal=${idAnimal} `;
+
+            await database.query(queryDeleteAnimalHabitat)
+            .then(async (result) => {
+                if(result.rowCount != 0) {
+                    const queryDeleteAnimal = `DELETE FROM animal WHERE idanimal=${idAnimal}`;
+                    await database.query(queryDeleteAnimal)
+                    .then ((result) => {
+                        if(result.rowCount != 0) {
+                            queryResult = true;
+                        }
+                    })
+                }
+            })
+
+            return queryResult;
+        } catch (error) {
+            console.log(`Erro na consulta: ${error}`);
+            return queryResult;
         }
     }
 }
