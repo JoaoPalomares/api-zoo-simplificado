@@ -10,6 +10,10 @@ const database = new DatabaseModel().pool;
  * Representa uma atração em um zoológico.
  */
 export class Atracao {
+    
+    setHabitatAtracao(habitat: Habitat) {
+        throw new Error('Method not implemented.');
+    }
 
     /**
      * O nome da atração.
@@ -54,7 +58,7 @@ export class Atracao {
      * 
      * @returns A lista de atracaos da atração.
      */
-    public getatracaos(): Habitat {
+    public getAtracao(): Habitat {
         return this.habitatAtracao;
     }
 
@@ -63,7 +67,7 @@ export class Atracao {
      * 
      * @param _atracaos A lista de atracaos a ser atribuída à atração.
      */
-    public setatracao(_habitat: Habitat): void {
+    public setAtracao(_habitat: Habitat): void {
         this.habitatAtracao = _habitat;
     }
 
@@ -178,6 +182,27 @@ export class Atracao {
             return queryResult;
         } catch (error) {
             console.log(`Erro na consulta: ${error}`);
+            return queryResult;
+        }
+    }
+
+    static async atualizarAtracao(atracao: Atracao, idAtracao: number): Promise<boolean> {
+        let queryResult = false;
+
+        try {
+            const queryUpdateAtracao = `UPDATE atracao SET
+                                            nomeAtracao = '${atracao.getNomeAtracao().toUpperCase()}'
+                                        WHERE idAtracao = ${idAtracao}`;
+
+            const result = await database.query(queryUpdateAtracao);
+
+            if (result.rowCount !== 0) {
+                queryResult = true;
+            }
+
+            return queryResult;
+        } catch (error) {
+            console.log(`Erro na consulta de atualização de atração: ${error}`);
             return queryResult;
         }
     }

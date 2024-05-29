@@ -112,7 +112,7 @@ export class Ave extends Animal {
                     if (!await Habitat.inserirAnimalHabitat(idAnimal, idHabitat)) {
                         console.log("Erro ao cadastrar animal no habitat");
                     };
-                    
+
                     // Se o número de linhas for diferente de zero, a operação deu certo e o valor VERDADEIRO é atribuido na variável
                     insertResult = true;
                 });
@@ -139,18 +139,38 @@ export class Ave extends Animal {
             const queryDeleteAnimalHabitat = `DELETE FROM animal_habitat WHERE idanimal=${idAnimal} `;
 
             await database.query(queryDeleteAnimalHabitat)
-            .then(async (result) => {
-                if(result.rowCount != 0) {
-                    const queryDeleteAnimal = `DELETE FROM animal WHERE idanimal=${idAnimal}`;
-                    await database.query(queryDeleteAnimal)
-                    .then ((result) => {
-                        if(result.rowCount != 0) {
-                            queryResult = true;
-                        }
-                    })
-                }
-            })
 
+            const queryDeleteAnimal = `DELETE FROM animal WHERE idanimal=${idAnimal}`;
+            await database.query(queryDeleteAnimal)
+                .then((result) => {
+                    if (result.rowCount != 0) {
+                        queryResult = true;
+                    }
+                })
+
+            return queryResult;
+        } catch (error) {
+            console.log(`Erro na consulta: ${error}`);
+            return queryResult;
+        }
+    }
+
+    static async atualizarAve(ave: Ave, idAve: number): Promise<Boolean> {
+        let queryResult = false;
+
+        try {
+            const queryUpdateAve = `UPDATE animal SET
+                                        nomeAnimal='${ave.getNomeAnimal().toUpperCase()}',
+                                        idadeAnimal=${ave.getIdadeAnimal()},
+                                        generoAnimal='${ave.getGeneroAnimal().toUpperCase()}',
+                                        envergadura=${ave.getEnvergadura()}
+                                    WHERE idAnimal=${idAve}`;
+            await database.query(queryUpdateAve)
+                .then((result) => {
+                    if (result.rowCount !== 0) {
+                        queryResult = true;
+                    }
+                })
             return queryResult;
         } catch (error) {
             console.log(`Erro na consulta: ${error}`);

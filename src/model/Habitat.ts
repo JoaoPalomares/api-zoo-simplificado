@@ -243,4 +243,24 @@ export class Habitat {
             return queryResult;
         }
     }
+
+    static async atualizarHabitat(habitat: Habitat, idHabitat: number): Promise<Boolean> {
+        let queryResult = false;
+
+        try {
+            const queryUpdateHabitat = `UPDATE habitat SET
+                                            nomeHabitat='${habitat.getNomeHabitat().toUpperCase()}'
+                                        WHERE idHabitat=${idHabitat}`;
+            await database.query(queryUpdateHabitat)
+            .then ((result) => {
+                if (result.rowCount !== 0) {
+                    queryResult = true;
+                }
+            })
+            return queryResult;
+        } catch (error) {
+            console.log(`Erro na consulta: ${error}`);
+            return queryResult;
+        }
+    }
 }
